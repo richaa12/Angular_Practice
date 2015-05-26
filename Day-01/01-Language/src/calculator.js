@@ -1,20 +1,21 @@
 function add(x,y){
     function parseArg(n){
-        if (Array.isArray(n)){
-            var result = 0;
-            for(var i=0; i<n.length; i++)
-                result += parseArg(n[i]);
-            return result;
-        }
+        if (Array.isArray(n)) return add.apply(this, n);
         if (typeof n === "function") return parseArg(n());
         return isNaN(n) ? 0 : parseInt(n,10);
     }
-    var result = 0;
-    for(var i=0; i<arguments.length; i++)
-        result += parseArg(arguments[i]);
-    return result;
+    return arguments.length <= 1 ? parseArg(arguments[0]) : parseArg(arguments[0]) + add([].slice.call(arguments, 1));
 }
 
-// Convert the array into an argument list, we can get rid of 4 - 7
+// -> convert the array into arguments
 
-//this
+// arguments
+// this
+
+//function invocation
+//1. as a method of an obj -> this => obj
+//2. as a function -> this => window
+
+//3. using the "call" method
+//4. using the "apply" method
+
