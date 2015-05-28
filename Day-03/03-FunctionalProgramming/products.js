@@ -302,7 +302,26 @@ display("Functional Programming", function(){
         console.table(productsGroupedByCost["affordable"]);
     });
 
+    display("IndexBy", function(){
+        function indexBy(list, iteratee){
+            var result = {};
+            for(var i=0; i<list.length;i++)
+                result[list[i][iteratee]] = list[i];
+            return result;
+        }
+        var stooges = [{name: 'moe', age: 40}, {name: 'larry', age: 50}, {name: 'curly', age: 60}];
+        var result = indexBy(stooges, "age");
+        console.log(result);
+    });
 });
+
+function after(times, fn){
+    var count = 0;
+    return function(){
+        if (++count > times)
+            fn.apply(this, arguments);
+    }
+}
 
 /*
 sort - done
@@ -315,4 +334,5 @@ max
 sum
 aggregate
 groupBy
+
 */
