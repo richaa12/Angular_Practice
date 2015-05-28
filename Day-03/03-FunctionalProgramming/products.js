@@ -83,12 +83,103 @@ display("Functional Programming", function(){
                 console.table(products);
             });
         });
+    });
+    display("Filter", function(){
+       /*function filterCostlyProducts(){
+           var result = [];
+           for(var i=0; i<products.length; i++)
+               if (products[i].cost > 50)
+                   result.push(products[i]);
+           return result;
+       }
+       var costlyProducts = filterCostlyProducts();
+       console.table(costlyProducts);
+
+       function filterCategory1Products(){
+           var result = [];
+           for(var i=0; i<products.length; i++)
+               if (products[i].category === 1)
+                   result.push(products[i]);
+           return result;
+       }
+       var allCategory1Products = filterCategory1Products();
+        console.table(allCategory1Products);*/
+
+         function filter(list, criteriaFn){
+           var result = [];
+           for(var i=0; i<list.length; i++)
+               if (criteriaFn(list[i]))
+                   result.push(list[i]);
+           return result;
+        }
+        var costlyProductCriteria = function(product){
+            return product.cost > 50;
+        };
+        display("All costly products [cost > 50]", function(){
+            var allCostlyProducts = filter(products, costlyProductCriteria);
+            console.table(allCostlyProducts);
+        });
+
+        /*var affordableProductCriteria = function(product){
+            return !costlyProductCriteria(product);
+        };
+        var nonCategory1ProductCriteria = function(product){
+            return !category1ProductCriteria(product);
+        };*/
+
+        function negate(criteriaFn){
+            return function(){
+                return !criteriaFn.apply(this,arguments);
+            };
+        }
+
+        function andCriteria(criteriaFn1, criteriaFn2){
+            return function(){
+                return criteriaFn1.apply(this,arguments) && criteriaFn2.apply(this,arguments);
+            }
+        }
+        function orCriteria(criteriaFn1, criteriaFn2){
+            return function(){
+                return criteriaFn1.apply(this,arguments) || criteriaFn2.apply(this,arguments);
+            }
+        }
+        var affordableProductCriteria = negate(costlyProductCriteria);
+
+        display("All affordable products [!costlyProduct]", function(){
+            var allAffordableProducts = filter(products, affordableProductCriteria);
+            console.table(allAffordableProducts);
+        });
+        var category1ProductCriteria = function(product){
+            return product.category === 1;
+        };
+
+        display("All category 1 products", function(){
+            var allCategory1Products = filter(products, category1ProductCriteria);
+            console.table(allCategory1Products);
+        });
+        var nonCategory1ProductCriteria = negate(category1ProductCriteria);
+
+        display("Non category 1 products", function(){
+            var nonCategory1Products = filter(products, nonCategory1ProductCriteria);
+            console.table(nonCategory1Products);
+        });
+
+        display("All category 1 costly products [cost >= 50 && category == 1]", function(){
+            var category1CostlyProductCriteria = andCriteria(category1ProductCriteria, costlyProductCriteria);
+            var allCategory1CostlyProducts = filter(products, category1CostlyProductCriteria);
+            console.table(allCategory1CostlyProducts);
+        });
+        display("All category 1 OR costly products [cost >= 50 || category == 1]", function(){
+            var category1OrCostlyProductCriteria = orCriteria(category1ProductCriteria, costlyProductCriteria);
+            var allCategory1OrCostlyProducts = filter(products, category1OrCostlyProductCriteria);
+            console.table(allCategory1OrCostlyProducts);
+        });
 
     });
 });
 
 /*
-sort
+sort - done
 filter
 all
 any
