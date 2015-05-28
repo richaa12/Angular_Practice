@@ -176,6 +176,132 @@ display("Functional Programming", function(){
         });
 
     });
+    display("All", function(){
+        function all(list, predicate){
+            for(var i=0; i<list.length;i++)
+                if (!predicate(list[i])) return false;
+            return true;
+        }
+        var costlyProductPredicate = function(product){
+            return product.cost > 50;
+        }
+        var areAllProductsCostly = all(products, costlyProductPredicate);
+        console.log("Are all the products costly?", areAllProductsCostly);
+    });
+    display("Any", function(){
+        function any(list, predicate){
+            for(var i=0; i<list.length;i++)
+                if (predicate(list[i])) return true;
+            return false;
+        }
+        var costlyProductPredicate = function(product){
+            return product.cost > 50;
+        }
+        var areAnyOfTheProductsCostly = any(products, costlyProductPredicate);
+        console.log("Are any of the products costly?", areAnyOfTheProductsCostly);
+    });
+    display("CountBy", function(){
+        function countBy(list, predicate){
+            var result = 0;
+            for(var i=0; i<list.length;i++)
+                if (predicate(list[i])) ++result;
+            return result;
+        }
+        var costlyProductPredicate = function(product){
+            return product.cost > 50;
+        }
+        var noOfCostlyProducts = countBy(products, costlyProductPredicate);
+        console.log("Total number of costly products = ", noOfCostlyProducts);
+    });
+    display("Min", function(){
+       function min(list, valueSelector){
+           var result = valueSelector(list[0]);
+           for(var i=1; i<list.length; i++){
+               var value = valueSelector(list[i]);
+               if (result > value) result = value;
+           }
+           return result;
+       }
+       var costValueSelector = function(product){
+           return product.cost;
+       };
+       var minCost = min(products, costValueSelector);
+       console.log("Minimum Cost = ", minCost);
+    });
+    display("Max", function(){
+       function max(list, valueSelector){
+           var result = valueSelector(list[0]);
+           for(var i=1; i<list.length; i++){
+               var value = valueSelector(list[i]);
+               if (result < value) result = value;
+           }
+           return result;
+       }
+       var costValueSelector = function(product){
+           return product.cost;
+       };
+       var maxCost = max(products, costValueSelector);
+       console.log("Maximum Cost = ", maxCost);
+       var maxUnits= max(products, function(p){ return p.units; });
+       console.log("Maximum Units = ", maxUnits);
+    });
+    display("Aggregate", function(){
+        function aggregate(list, aggregator, seed){
+            var first, start;
+            if (!seed){
+                seed = list[0],
+                first = list[1];
+                start = 2;
+            } else {
+                first = list[0];
+                start = 1;
+            }
+            var result = aggregator(seed, first);
+            for(var i=start; i<list.length; i++)
+                result = aggregator(result, list[i]);
+            return result;
+        }
+        var sumOfUnits = aggregate(products, function(result, product){
+            return result + product.units;
+        },0);
+        console.log("Sum of Units = ", sumOfUnits);
+        var maxOfUnits = aggregate(products, function(result, product){
+            return result > product.units ? result : product.units;
+        }, 0);
+        console.log("Max of Units = ", maxOfUnits);
+
+        var maxStockedProduct = aggregate(products, function(result, product){
+            return result.units > product.units ? result : product;
+        });
+        console.log("Max stocked product = ", maxStockedProduct);
+    });
+    display("GroupBy", function(){
+        function groupBy(list, keySelector){
+            var result = {};
+            for(var i=0; i<list.length; i++){
+                var item = list[i];
+                var key = keySelector(item);
+                if (typeof result[key] === "undefined")
+                    result[key] = [];
+                result[key].push(item);
+            }
+            return result;
+        }
+
+        var produtsGroupedByCategory = groupBy(products, function(product){ return product.category;});
+        console.log("Products Grouped By Category ", produtsGroupedByCategory);
+
+        var productsGroupedByCost = groupBy(products, function(product){
+            return product.cost > 50 ? "costly" : "affordable";
+        });
+        console.log("Products Grouped By Cost ", productsGroupedByCost);
+        console.log("Costly");
+        console.table(productsGroupedByCost["costly"]);
+
+        console.log("Affordable");
+        console.table(productsGroupedByCost["affordable"]);
+    });
+
 });
 
 /*
