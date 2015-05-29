@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="jquery-1.11.3.js"></script>
+    <script type="text/javascript">
+    /*
+        jQuery - Library for manipulating dom nodes
+
+        1. Locate the button
+        2. Attach a click handler to the button
+        3. Locate the textbox
+        4. Get the value
+        5. Create a greet msg
+        6. Display the message in div#divMessage
+
+        selector -> domNode, string, array of dom nodes, function
+    */
+    </script>
+    <script>
+        $(function(){
+            $("#btnGreet").click(function(){
+                var msg = "Hi " + $("#txtName").val() + ", Have a nice day!";
+                $("#divMessage").html(msg);
+            });
+        });
+
+
+    </script>
+</head>
+<body>
+<h1>Greeting App</h1>
+<label for="">Name :</label>
+<input type="text" name="" id="txtName">
+<input type="button" value="Greet" id="btnGreet" >
+<div id="divMessage">[Message here]</div>
+</body>
+</html>
