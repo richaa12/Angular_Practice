@@ -12,6 +12,7 @@
     };
 
     //Model
+    //Evented Models
     function SalaryCalculator(){
         //this.basic = 0;
         /*var _basic = 0;
@@ -54,20 +55,22 @@
         this.set = function(attrName, value){
             _data[attrName] = value;
             //trigger change for [attrName]
-            var listenerFn = _eventHandlers[attrName];
-            if (typeof listenerFn === "function")
-                listenerFn();
+            var listenerFns = _eventHandlers[attrName];
+            listenerFns.forEach(function(listenerFn){
+                if (typeof listenerFn === "function")
+                    listenerFn();
+            });
         };
 
         var _eventHandlers = {
-            basic : null,
-            hra : null,
-            da : null,
-            tax : null,
-            salary : null
+            basic : [],
+            hra : [],
+            da : [],
+            tax : [],
+            salary : []
         };
         this.addEventListener = function(attrName, listenerFn){
-            _eventHandlers[attrName] = listenerFn;
+            _eventHandlers[attrName].push(listenerFn);
         };
 
        /* this.da = 0;
