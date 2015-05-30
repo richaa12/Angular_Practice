@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salary Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery-1.11.3.js"></script>
+    <script type="text/template" id="calculatorTemplate">
+     <div class="content">
+        <div class="field">
+            <label for="">Basic :</label>
+            <input type="text" name="" id="txtBasic">
+        </div>
+        <div class="field">
+            <label for="">HRA :</label>
+            <input type="text" name="" id="txtHra">
+        </div>
+        <div class="field">
+            <label for="">DA :</label>
+            <input type="text" name="" id="txtDa">
+        </div>
+        <div class="field">
+            <label for="">Tax :</label>
+            <input type="range" name="" id="rangeTax" min="0" max="30" value="0">
+            <span id="spanTax">[Tax]</span>
+        </div>
+        <div>
+            <field><input type="button" value="Calculate" id="btnCalculate"></field>
+            <div class="field">
+                <div id="divResult">[Salary]</div>
+            </div>
+        </div>
+    </div>
+    </script>
+    <script>
+
+    String.prototype.toInt = function(){
+        return parseInt(this,10);
+    };
+
+    //Model
+    //Evented Models
+    function SalaryCalculator(defaults){
+
+        var _data = defaults || {};
+        this.get = function(attrName){
+            return _data[attrName];
+        };
+        this.set = function(attrName, value){
+            _data[attrName] = value;
+            //trigger change for [attrName]
+            var listenerFns = _eventHandlers[attrName];
+            listenerFns.forEach(function(listenerFn){
+                if (typeof listenerFn === "function")
+                    listenerFn();
+            });
+        };
+
+        var _eventHandlers = {};
+        this.addEventListener = function(attrName, listenerFn){
+            _eventHandlers[attrName] = _eventHandlers[attrName] || [];
+            _eventHandlers[attrName].push(listenerFn);
+        };
+    }
+    SalaryCalculator.prototype.calculate = function(){
+        var gross = this.get('basic') + this.get('hra') + this.get('da');
+        var net = gross * ((100-this.get('tax'))/100);
+        this.set('salary',net);
+    }
+
+    //View
+    function SalaryCalculatorView(calculator){
+        var $root = this.$root = $("<div></div>");
+
+        this.initialize = function(){
+
+             //Reacting to User Actions
+            $root.on("change", "#txtBasic", function(){
+                calculator.set('basic',this.value.toInt());
+            });
+            $root.on("change", "#txtHra", function(){
+                calculator.set('hra', this.value.toInt());
+            });
+            $root.on("change", "#txtDa", function(){
+                calculator.set('da', this.value.toInt());
+            });
+            $root.on("change", "#rangeTax", function(){
+                calculator.set('tax', this.value.toInt());
+            });
+            $root.on("click", "#btnCalculate", function(){
+                calculator.calculate();
+            });
+
+            //Reacting to Model Changes
+            calculator.addEventListener('salary', function(){
+                $("#divResult", $root).html(calculator.get('salary'));
+            });
+            calculator.addEventListener('basic', function(){
+                $("#txtBasic", $root).val(calculator.get('basic'));
+            });
+            calculator.addEventListener('hra', function(){
+                $("#txtHra", $root).val(calculator.get('hra'));
+            });
+            calculator.addEventListener('da', function(){
+                $("#txtDa", $root).val(calculator.get('da'));
+            });
+            calculator.addEventListener('tax', function(){
+                $("#rangeTax", $root).val(calculator.get('tax'));
+                $("#spanTax", $root).html(calculator.get('tax'));
+            });
+        }
+
+        this.render = function(){
+            $root.html($("#calculatorTemplate").html());
+        }
+    }
+    /*$(function(){
+        window.calculator = new SalaryCalculator({
+            basic : 0,
+            hra : 0,
+            da : 0,
+            tax : 0,
+            salary : 0
+        });
+
+
+    });*/
+    </script>
+</head>
+<body>
+    <h1>Salary Calculator</h1>
+
+
+</body>
+</html>
