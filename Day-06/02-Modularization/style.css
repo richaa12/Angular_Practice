@@ -1,0 +1,16 @@
+h1{
+    border-top : 2px solid blue;
+    border-bottom : 2px solid blue;
+    background-color: lightblue;
+    padding: 10px;
+}
+#divResult{
+    font-size: 28pt;
+    color: red;
+}
+label{
+    display: block;
+}
+.field{
+    margin-bottom: 10px;
+}
